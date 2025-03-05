@@ -2,15 +2,15 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-  entry: "./src/index.js",
+  entry: "./index.cjs",
   output: {
-    filename: "bundle.js",
     path: path.resolve(__dirname, "dist"),
+    filename: "bundle.js",
   },
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/, // Ensuring Webpack processes JavaScript files
+        test: /\.(js|cjs)$/,
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
@@ -19,10 +19,6 @@ module.exports = {
           },
         },
       },
-      {
-        test: /\.css$/, // Ensuring CSS files are processed
-        use: ["style-loader", "css-loader"],
-      },
     ],
   },
   plugins: [
@@ -30,11 +26,15 @@ module.exports = {
       template: "./public/index.html",
     }),
   ],
-  resolve: {
-    extensions: [".js", ".jsx"], // Allows importing files without specifying .js or .jsx
-  },
   devServer: {
-    static: "./dist",
-    hot: true,
+    static: path.join(__dirname, "dist"),
+    compress: true,
+    port: 4000,
+    allowedHosts: "all",
+    historyApiFallback: true,
+    client: {
+      logging: "info",
+    },
+    host: "0.0.0.0", // Explicitly set the host
   },
 };
