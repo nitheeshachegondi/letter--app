@@ -2,15 +2,16 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-  entry: "./index.cjs",
+  mode: "development",
+  entry: "./index.cjs", // Entry file
   output: {
-    path: path.resolve(__dirname, "dist"),
     filename: "bundle.js",
+    path: path.resolve(__dirname, "dist"),
   },
   module: {
     rules: [
       {
-        test: /\.(js|cjs)$/,
+        test: /\.(js|cjs)$/, // Process JS and CJS files
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
@@ -18,6 +19,10 @@ module.exports = {
             presets: ["@babel/preset-react"],
           },
         },
+      },
+      {
+        test: /\.css$/, // Process CSS files
+        use: ["style-loader", "css-loader"],
       },
     ],
   },

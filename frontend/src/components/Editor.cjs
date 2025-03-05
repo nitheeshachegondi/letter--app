@@ -14,14 +14,19 @@ const Editor = ({ user }) => {
 
     try {
       setLoading(true); // Start loading
-      await axios.post("http://localhost:5000/api/save", {
+      const response = await axios.post("http://localhost:5000/api/save", {
         content,
         userEmail: user.email,
       });
+
+      console.log("Response:", response.data); // Debugging
       alert("Saved to Google Drive!");
     } catch (error) {
-      console.error("Error saving:", error);
-      alert("Failed to save. Please try again.");
+      console.error(
+        "Error saving:",
+        error.response ? error.response.data : error.message
+      );
+      alert("Failed to save. Please check logs.");
     } finally {
       setLoading(false); // Stop loading
     }
