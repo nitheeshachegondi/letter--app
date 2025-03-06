@@ -10,7 +10,7 @@ const Editor = require("./components/Editor.cjs");
 const API_BASE_URL =
   process.env.NODE_ENV === "development"
     ? "http://localhost:5000/api"
-    : "https://letter-app-omws.vercel.app/api";
+    : "https://letter-app1.vercel.app/api";
 
 function App() {
   const [user, setUser] = useState(() => {
