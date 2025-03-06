@@ -13,10 +13,26 @@ const letterRoutes = require("./routes/letterRoutes");
 dotenv.config();
 const app = express();
 
-// Middleware
-app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
+// 🔹 Fix CORS for Local & Deployed URLs
+const allowedOrigins = [process.env.FRONTEND_URL, "http://localhost:4000"];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use(bodyParser.json());
+
+// 🔹 Session & Authentication
 app.use(
   session({
     secret: process.env.JWT_SECRET,
@@ -27,7 +43,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Google OAuth2 Client for Google Drive
+// 🔹 Google OAuth2 Client for Google Drive
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
@@ -37,11 +53,13 @@ oauth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
 
 const drive = google.drive({ version: "v3", auth: oauth2Client });
 
-// Multer for handling file uploads
+// 🔹 Multer for File Uploads
 const upload = multer({ dest: "uploads/" });
 
-// ✅ Save text content to Google Drive
-app.post("/save", async (req, res) => {
+/* ===========================
+✅ Save Text Content to Google Drive
+=========================== */
+app.post("/api/save", async (req, res) => {
   try {
     const { content, userEmail } = req.body;
 
@@ -80,8 +98,10 @@ app.post("/save", async (req, res) => {
   }
 });
 
-// ✅ Upload file to Google Drive
-app.post("/upload", upload.single("file"), async (req, res) => {
+/* ===========================
+✅ Upload File to Google Drive
+=========================== */
+app.post("/api/upload", upload.single("file"), async (req, res) => {
   try {
     const fileMetadata = { name: req.file.originalname };
     const media = {
@@ -106,10 +126,12 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   }
 });
 
-// Letter routes
-app.use("/letter", letterRoutes);
+/* ===========================
+✅ Letter Routes (with `/api`)
+=========================== */
+app.use("/api/letter", letterRoutes);
 
-// Start server
+// 🔹 Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
