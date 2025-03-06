@@ -41,7 +41,7 @@ const drive = google.drive({ version: "v3", auth: oauth2Client });
 const upload = multer({ dest: "uploads/" });
 
 // ✅ Save text content to Google Drive
-app.post("/api/save", async (req, res) => {
+app.post("/save", async (req, res) => {
   try {
     const { content, userEmail } = req.body;
 
@@ -76,7 +76,7 @@ app.post("/api/save", async (req, res) => {
     res.json({ message: "Saved successfully!", fileId: response.data.id });
   } catch (error) {
     console.error("Error saving to Google Drive:", error);
-    res.status(500).json({ error: "saved to Google Drive" });
+    res.status(500).json({ error: "Error saving to Google Drive" });
   }
 });
 
